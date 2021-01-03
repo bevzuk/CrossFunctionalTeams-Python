@@ -6,7 +6,7 @@ class ScrumTeamBuilder(object):
         return self
 
     def please(self):
-        return ScrumTeam()
+        return ScrumTeam.__create__()
 
 
 class Given:
