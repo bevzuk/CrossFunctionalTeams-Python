@@ -1,3 +1,7 @@
+def publish(events):
+    EventsStore.publish(events)
+
+
 class EventsStore(object):
     events = []
 

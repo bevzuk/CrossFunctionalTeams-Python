@@ -1,5 +1,5 @@
 from developer import Developer
-from events_store import EventsStore
+from events_store import publish
 
 
 def mutate(entity, event):
@@ -9,10 +9,6 @@ def mutate(entity, event):
         event.mutate(entity)
     else:
         raise NotImplementedError(type(event))
-
-
-def publish(events):
-    EventsStore.publish(events)
 
 
 class ScrumTeam(object):
@@ -51,4 +47,3 @@ class ScrumTeam(object):
             for skill in self._skills:
                 developer.learn(skill)
             scrum_team._developers.append(developer)
-

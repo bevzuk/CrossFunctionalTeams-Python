@@ -3,7 +3,7 @@ import unittest
 from tests.dsl.given import Given
 
 
-class WhenPlanRelease(unittest.TestCase):
+class WhenHireDevelopers(unittest.TestCase):
     def test_can_hire_developer(self):
         scrum_team = Given\
             .scrum_team()\
