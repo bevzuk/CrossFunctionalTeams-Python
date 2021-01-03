@@ -5,6 +5,8 @@ from events_store import EventsStore
 def mutate(entity, event):
     if isinstance(event, ScrumTeam.Created):
         return event.mutate()
+    elif isinstance(event, ScrumTeam.DeveloperHired):
+        event.mutate(entity)
     else:
         raise NotImplementedError(type(event))
 
@@ -25,7 +27,9 @@ class ScrumTeam(object):
         return scrum_team
 
     def hire_developer(self):
-        self._developers.append(Developer())
+        event = ScrumTeam.DeveloperHired()
+        mutate(self, event)
+        publish([event])
 
     def number_of_developers(self):
         return len(self._developers)
@@ -33,4 +37,8 @@ class ScrumTeam(object):
     class Created(object):
         def mutate(self):
             return ScrumTeam()
+
+    class DeveloperHired(object):
+        def mutate(self, scrum_team):
+            scrum_team._developers.append(Developer())
 
