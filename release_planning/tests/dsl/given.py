@@ -5,7 +5,7 @@ class ScrumTeamBuilder(object):
     _scrum_team = ScrumTeam.__create__()
 
     def with_developer(self):
-        self._scrum_team.hire_developer()
+        self._scrum_team.hire_developer("")
         return self
 
     def please(self):
