@@ -26,8 +26,8 @@ class ScrumTeam(object):
         publish([event])
         return scrum_team
 
-    def hire_developer(self, name):
-        event = ScrumTeam.DeveloperHired(name)
+    def hire_developer(self, name="", skills=[]):
+        event = ScrumTeam.DeveloperHired(name, skills)
         mutate(self, event)
         publish([event])
 
@@ -42,9 +42,13 @@ class ScrumTeam(object):
             return ScrumTeam()
 
     class DeveloperHired(object):
-        def __init__(self, name):
+        def __init__(self, name, skills):
             self._name = name
+            self._skills = skills
 
         def mutate(self, scrum_team):
-            scrum_team._developers.append(Developer(self._name))
+            developer = Developer(self._name)
+            for skill in self._skills:
+                developer.learn(skill)
+            scrum_team._developers.append(developer)
 
