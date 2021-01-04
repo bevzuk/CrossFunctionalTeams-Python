@@ -1,18 +1,12 @@
-from scrum_team import ScrumTeam
-
-
-class ScrumTeamBuilder(object):
-    _scrum_team = ScrumTeam.__create__()
-
-    def with_developer(self):
-        self._scrum_team.hire_developer("")
-        return self
-
-    def please(self):
-        return self._scrum_team
+from tests.dsl.product_backlog_builder import ProductBacklogBuilder
+from tests.dsl.scrum_team_builder import ScrumTeamBuilder
 
 
 class Given:
     @classmethod
     def scrum_team(cls):
         return ScrumTeamBuilder()
+
+    @classmethod
+    def product_backlog(cls):
+        return ProductBacklogBuilder()

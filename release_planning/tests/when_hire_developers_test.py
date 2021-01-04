@@ -27,7 +27,7 @@ class WhenHireDevelopers(unittest.TestCase):
             .scrum_team()\
             .please()
 
-        scrum_team.hire_developer(["A", "B"])
+        scrum_team.hire_developer("", ["A", "B"])
 
         self.assertEqual(["A", "B"], scrum_team.developers()[0].skills())
 
