@@ -1,6 +1,7 @@
 from eventsourcing.domain.model.entity import DomainEntity
 
 from developer import Developer
+from naive_plan_strategy import NaivePlanStrategy
 
 
 class ScrumTeam(DomainEntity):
@@ -20,17 +21,7 @@ class ScrumTeam(DomainEntity):
         return list(self._developers)
 
     def plan_day(self, product_backlog):
-        plan = {}
-        for developer in self._developers:
-            plan[developer.name()] = self._plan_developer(product_backlog)
-        return plan
-
-    def _plan_developer(self, product_backlog):
-        developer_plan = []
-        for item in product_backlog.items():
-            for task in item.tasks():
-                developer_plan.append((item.name(), task))
-        return developer_plan
+        return NaivePlanStrategy().plan(self._developers, product_backlog)
 
     class DeveloperHired(DomainEntity.Event):
         def mutate(self, scrum_team):
