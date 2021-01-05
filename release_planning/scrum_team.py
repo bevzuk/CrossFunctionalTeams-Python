@@ -1,3 +1,5 @@
+from typing import Type, Any
+
 from developer import Developer
 from events_store import publish
 
@@ -32,6 +34,11 @@ class ScrumTeam(object):
 
     def developers(self):
         return list(self._developers)
+
+    def __trigger_event__(self, event_class: Type[object], **kwargs: Any) -> None:
+        event = event_class(**kwargs)
+        mutate(self, event)
+        publish([event])
 
     class Created(object):
         def mutate(self):

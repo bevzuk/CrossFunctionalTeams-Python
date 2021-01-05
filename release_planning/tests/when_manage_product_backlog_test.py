@@ -11,6 +11,14 @@ class WhenManageProductBacklog(unittest.TestCase):
 
         self.assertEqual("User Story", backlog.items()[0].name())
 
+    def test_can_add_item_with_tasks(self):
+        backlog = Given\
+            .product_backlog()\
+            .with_item("User Story", "A", "B", "C")\
+            .please()
+
+        self.assertEqual(["A", "B", "C"], backlog.items()[0].tasks())
+
 
 if __name__ == '__main__':
     unittest.main()

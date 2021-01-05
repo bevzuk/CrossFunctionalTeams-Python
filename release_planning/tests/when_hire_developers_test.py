@@ -16,9 +16,8 @@ class WhenHireDevelopers(unittest.TestCase):
     def test_can_hire_developer_with_name(self):
         scrum_team = Given\
             .scrum_team()\
+            .with_developer("Homer")\
             .please()
-
-        scrum_team.hire_developer("Homer")
 
         self.assertEqual("Homer", scrum_team.developers()[0].name())
 

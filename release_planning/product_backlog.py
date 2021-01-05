@@ -1,3 +1,5 @@
+from typing import Any, Type
+
 from events_store import publish
 
 
@@ -29,20 +31,30 @@ class ProductBacklog(object):
     def items(self):
         return list(self._items)
 
+    def __trigger_event__(self, event_class: Type[object], **kwargs: Any) -> None:
+        event = event_class(**kwargs)
+        mutate(self, event)
+        publish([event])
+
     class Item(object):
-        def __init__(self, name):
+        def __init__(self, name, tasks):
             self._name = name
+            self._tasks = tasks
 
         def name(self):
             return self._name
+
+        def tasks(self):
+            return list(self._tasks)
 
     class Created(object):
         def mutate(self):
             return ProductBacklog()
 
     class ItemAdded(object):
-        def __init__(self, name):
+        def __init__(self, name, tasks=[]):
             self._name = name
+            self._tasks = tasks
 
         def mutate(self, product_backlog):
-            product_backlog._items.append(ProductBacklog.Item(self._name))
+            product_backlog._items.append(ProductBacklog.Item(self._name, self._tasks))
