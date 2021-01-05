@@ -1,33 +1,15 @@
-from typing import Type, Any
+from eventsourcing.domain.model.entity import DomainEntity
 
 from developer import Developer
-from events_store import publish
 
 
-def mutate(entity, event):
-    if isinstance(event, ScrumTeam.Created):
-        return event.mutate()
-    elif isinstance(event, ScrumTeam.DeveloperHired):
-        event.mutate(entity)
-    else:
-        raise NotImplementedError(type(event))
-
-
-class ScrumTeam(object):
-    def __init__(self):
+class ScrumTeam(DomainEntity):
+    def __init__(self, **kwargs):
+        super(ScrumTeam, self).__init__(**kwargs)
         self._developers = []
 
-    @classmethod
-    def __create__(cls):
-        event = ScrumTeam.Created()
-        scrum_team = mutate(None, event)
-        publish([event])
-        return scrum_team
-
     def hire_developer(self, name="", skills=[]):
-        event = ScrumTeam.DeveloperHired(name, skills)
-        mutate(self, event)
-        publish([event])
+        self.__trigger_event__(ScrumTeam.DeveloperHired, name=name, skills=skills)
 
     def number_of_developers(self):
         return len(self._developers)
@@ -35,22 +17,9 @@ class ScrumTeam(object):
     def developers(self):
         return list(self._developers)
 
-    def __trigger_event__(self, event_class: Type[object], **kwargs: Any) -> None:
-        event = event_class(**kwargs)
-        mutate(self, event)
-        publish([event])
-
-    class Created(object):
-        def mutate(self):
-            return ScrumTeam()
-
-    class DeveloperHired(object):
-        def __init__(self, name, skills):
-            self._name = name
-            self._skills = skills
-
+    class DeveloperHired(DomainEntity.Event):
         def mutate(self, scrum_team):
-            developer = Developer(self._name)
-            for skill in self._skills:
+            developer = Developer(self.__dict__["name"])
+            for skill in self.__dict__["skills"]:
                 developer.learn(skill)
             scrum_team._developers.append(developer)
