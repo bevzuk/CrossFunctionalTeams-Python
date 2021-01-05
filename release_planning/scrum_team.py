@@ -21,11 +21,15 @@ class ScrumTeam(DomainEntity):
         return list(self._developers)
 
     def plan_day(self, product_backlog):
-        return NaivePlanStrategy().plan(self._developers, product_backlog)
+        plan = NaivePlanStrategy().plan(self._developers, product_backlog)
+        self.__trigger_event__(ScrumTeam.DayPlanned, plan=plan)
 
     class DeveloperHired(DomainEntity.Event):
-        def mutate(self, scrum_team):
+        def mutate(self, scrum_team) -> None:
             developer = Developer(self.__dict__["name"])
             for skill in self.__dict__["skills"]:
                 developer.learn(skill)
             scrum_team._developers.append(developer)
+
+    class DayPlanned(DomainEntity.Event):
+        pass

@@ -1,14 +1,27 @@
 import unittest
 
+from eventsourcing.domain.model.events import subscribe
+
+from scrum_team import ScrumTeam
 from tests.dsl.given import Given
 
 
 class WhenPlanDailyWork(unittest.TestCase):
+    received_day_planned_events = []
+
+    def is_day_planned_event(self, events):
+        return all(isinstance(e, ScrumTeam.DayPlanned) for e in events)
+
+    def setUp(self) -> None:
+        self.received_day_planned_events = []
+        subscribe(lambda e: self.received_day_planned_events.extend(e), predicate=self.is_day_planned_event)
+
     def test_plan_single_item(self):
         scrum_team = Given.scrum_team().with_developer("Homer", "A").please()
         product_backlog = Given.product_backlog().with_item("US1", "A").please()
 
-        plan = scrum_team.plan_day(product_backlog)
+        scrum_team.plan_day(product_backlog)
+        plan = self.received_day_planned_events[0].plan
 
         self.assertEqual({"Homer": [("US1", "A")]}, plan)
 
@@ -23,7 +36,8 @@ class WhenPlanDailyWork(unittest.TestCase):
             .with_item("US2", "B") \
             .please()
 
-        plan = scrum_team.plan_day(product_backlog)
+        scrum_team.plan_day(product_backlog)
+        plan = self.received_day_planned_events[0].plan
 
         self.assertEqual({"Homer": [("US2", "B")]}, plan)
 
@@ -37,7 +51,8 @@ class WhenPlanDailyWork(unittest.TestCase):
             .with_item("US1", "B") \
             .please()
 
-        plan = scrum_team.plan_day(product_backlog)
+        scrum_team.plan_day(product_backlog)
+        plan = self.received_day_planned_events[0].plan
 
         self.assertEqual({"Homer": []}, plan)
 
@@ -52,7 +67,8 @@ class WhenPlanDailyWork(unittest.TestCase):
             .with_item("US1", "A") \
             .please()
 
-        plan = scrum_team.plan_day(product_backlog)
+        scrum_team.plan_day(product_backlog)
+        plan = self.received_day_planned_events[0].plan
 
         self.assertEqual({
             "Homer": [("US1", "A")],
@@ -70,7 +86,8 @@ class WhenPlanDailyWork(unittest.TestCase):
             .with_item("US1", "A", "B") \
             .please()
 
-        plan = scrum_team.plan_day(product_backlog)
+        scrum_team.plan_day(product_backlog)
+        plan = self.received_day_planned_events[0].plan
 
         self.assertEqual({
             "Homer": [("US1", "A")],
@@ -89,7 +106,8 @@ class WhenPlanDailyWork(unittest.TestCase):
             .with_item("US2", "A") \
             .please()
 
-        plan = scrum_team.plan_day(product_backlog)
+        scrum_team.plan_day(product_backlog)
+        plan = self.received_day_planned_events[0].plan
 
         self.assertEqual({
             "Homer": [("US2", "A")],
@@ -107,7 +125,8 @@ class WhenPlanDailyWork(unittest.TestCase):
             .with_item("US1", "A", "B") \
             .please()
 
-        plan = scrum_team.plan_day(product_backlog)
+        scrum_team.plan_day(product_backlog)
+        plan = self.received_day_planned_events[0].plan
 
         self.assertEqual({
             "Homer": [("US1", "A")],

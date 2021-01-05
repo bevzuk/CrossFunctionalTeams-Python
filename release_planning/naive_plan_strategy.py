@@ -11,7 +11,7 @@ class NaivePlanStrategy(object):
         for task in tasks:
             if task[1] in developer.skills():
                 developer_plan.append((task[0].name(), task[1]))
-                tasks = tasks.remove(task)
+                tasks.remove(task)
         return developer_plan
 
     def _linearize(self, product_backlog):
