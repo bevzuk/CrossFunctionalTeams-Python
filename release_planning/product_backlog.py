@@ -6,8 +6,8 @@ class ProductBacklog(DomainEntity):
         super(ProductBacklog, self).__init__(**kwargs)
         self._items = []
 
-    def add(self, item_name):
-        self.__trigger_event__(ProductBacklog.ItemAdded, name=item_name, tasks=[])
+    def add(self, item_name, tasks):
+        self.__trigger_event__(ProductBacklog.ItemAdded, name=item_name, tasks=tasks)
 
     def items(self):
         return self._items.copy()
@@ -24,5 +24,6 @@ class ProductBacklog(DomainEntity):
             return self._tasks.copy()
 
     class ItemAdded(DomainEntity.Event):
-        def mutate(self, product_backlog):
-            product_backlog._items.append(ProductBacklog.Item(self.__dict__["name"], self.__dict__["tasks"]))
+        def mutate(self, product_backlog) -> None:
+            item = ProductBacklog.Item(self.__dict__["name"], self.__dict__["tasks"])
+            product_backlog._items.append(item)

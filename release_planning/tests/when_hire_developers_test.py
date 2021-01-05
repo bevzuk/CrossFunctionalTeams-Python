@@ -5,11 +5,10 @@ from tests.dsl.given import Given
 
 class WhenHireDevelopers(unittest.TestCase):
     def test_can_hire_developer(self):
-        scrum_team = Given\
-            .scrum_team()\
+        scrum_team = Given \
+            .scrum_team() \
+            .with_developer() \
             .please()
-
-        scrum_team.hire_developer()
 
         self.assertEqual(1, scrum_team.number_of_developers())
 
