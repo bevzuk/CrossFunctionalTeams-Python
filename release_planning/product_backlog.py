@@ -1,27 +1,21 @@
 from typing import Any, Type
 
+from eventsourcing.domain.model.entity import DomainEntity
+
 from events_store import publish
 
 
 def mutate(entity, event):
-    if isinstance(event, ProductBacklog.Created):
-        return event.mutate()
     if isinstance(event, ProductBacklog.ItemAdded):
         event.mutate(entity)
     else:
         raise NotImplementedError(type(event))
 
 
-class ProductBacklog(object):
-    def __init__(self):
+class ProductBacklog(DomainEntity):
+    def __init__(self, **kwargs):
+        super(ProductBacklog, self).__init__(**kwargs)
         self._items = []
-
-    @classmethod
-    def __create__(cls):
-        event = ProductBacklog.Created()
-        product_backlog = mutate(None, event)
-        publish([event])
-        return product_backlog
 
     def add(self, item_name):
         event = ProductBacklog.ItemAdded(item_name)
@@ -46,10 +40,6 @@ class ProductBacklog(object):
 
         def tasks(self):
             return list(self._tasks)
-
-    class Created(object):
-        def mutate(self):
-            return ProductBacklog()
 
     class ItemAdded(object):
         def __init__(self, name, tasks=[]):
