@@ -6,7 +6,7 @@ class ProductBacklogBuilder(object):
         self._backlog = ProductBacklog.__create__()
 
     def with_item(self, name, *tasks):
-        self._backlog.__trigger_event__(ProductBacklog.ItemAdded, name=name, tasks=tasks)
+        self._backlog.__trigger_event__(ProductBacklog.ItemAdded, name=name, tasks=list(tasks))
         return self
 
     def please(self):
