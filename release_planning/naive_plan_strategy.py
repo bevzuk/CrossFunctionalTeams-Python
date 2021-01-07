@@ -9,8 +9,8 @@ class NaivePlanStrategy(object):
     def _plan_developer(self, developer, tasks):
         developer_plan = []
         for task in tasks:
-            if task[1] in developer.skills():
-                developer_plan.append((task[0].name(), task[1]))
+            if task[1].name() in developer.skills():
+                developer_plan.append((task[0].name(), task[1].name()))
                 tasks.remove(task)
         return developer_plan
 

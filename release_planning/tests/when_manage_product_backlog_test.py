@@ -18,7 +18,7 @@ class WhenManageProductBacklog(unittest.TestCase):
             .with_item("User Story", "A", "B", "C")\
             .please()
 
-        self.assertEqual(["A", "B", "C"], backlog.items()[0].tasks())
+        self.assertEqual(["A", "B", "C"], list(map(lambda t: t.name(), backlog.items()[0].tasks())))
 
 
 if __name__ == '__main__':
