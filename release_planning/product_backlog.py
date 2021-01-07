@@ -38,7 +38,7 @@ class ProductBacklog(DomainEntity):
     def _is_task_is_done_event(self, events):
         return all(isinstance(e, ScrumTeam.TaskIsDone) for e in events)
 
-    class Item(object):
+    class ProductBacklogItem(object):
         def __init__(self, name, tasks):
             self._name = name
             self._tasks = tasks
@@ -65,5 +65,5 @@ class ProductBacklog(DomainEntity):
 
     class ItemAdded(DomainEntity.Event):
         def mutate(self, product_backlog) -> None:
-            item = ProductBacklog.Item(self.__dict__["name"], self.__dict__["tasks"])
+            item = ProductBacklog.ProductBacklogItem(self.__dict__["name"], self.__dict__["tasks"])
             product_backlog._items.append(item)
