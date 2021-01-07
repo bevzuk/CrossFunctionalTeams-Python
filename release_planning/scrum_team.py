@@ -55,3 +55,6 @@ class ScrumTeam(DomainEntity):
 
     class TaskIsDone(DomainEntity.Event):
         pass
+
+    class DayWorkIsDone(DomainEntity.Event):
+        pass

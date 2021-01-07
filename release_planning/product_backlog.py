@@ -10,6 +10,7 @@ class ProductBacklog(DomainEntity):
         super(ProductBacklog, self).__init__(**kwargs)
         self._items = []
         subscribe(self.task_is_done, self._is_task_is_done_event)
+        subscribe(self.day_work_is_done, self._is_day_work_is_done_event)
 
     def add(self, item_name, tasks):
         self.__trigger_event__(ProductBacklog.ItemAdded, name=item_name, tasks=tasks)
@@ -20,6 +21,23 @@ class ProductBacklog(DomainEntity):
     def task_is_done(self, events):
         for event in events:
             self._handle_done_task(event.task)
+
+    def day_work_is_done(self, events):
+        for event in events:
+            self._handle_day_work_is_done()
+
+    def _handle_day_work_is_done(self):
+        self._remove_items_with_done_tasks()
+        self._remove_done_tasks()
+
+    def _remove_done_tasks(self):
+        for item in self._items:
+            item.remove_done_tasks()
+
+    def _remove_items_with_done_tasks(self):
+        for item in self._items:
+            if all(t.status() == TaskStatus.Done for t in item.tasks()):
+                self._items.remove(item)
 
     def _handle_done_task(self, task):
         item = self._find_item_by_name(task[0])
@@ -38,6 +56,9 @@ class ProductBacklog(DomainEntity):
     def _is_task_is_done_event(self, events):
         return all(isinstance(e, ScrumTeam.TaskIsDone) for e in events)
 
+    def _is_day_work_is_done_event(self, events):
+        return all(isinstance(e, ScrumTeam.DayWorkIsDone) for e in events)
+
     class ProductBacklogItem(object):
         def __init__(self, name, tasks):
             self._name = name
@@ -48,6 +69,11 @@ class ProductBacklog(DomainEntity):
 
         def tasks(self):
             return self._tasks.copy()
+
+        def remove_done_tasks(self):
+            for task in self._tasks:
+                if task.status() == TaskStatus.Done:
+                    self._tasks.remove(task)
 
     class Task(object):
         def __init__(self, name):
