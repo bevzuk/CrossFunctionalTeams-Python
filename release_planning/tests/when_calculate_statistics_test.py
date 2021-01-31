@@ -10,11 +10,12 @@ from tests.dsl.given import Given
 class WhenCalculateStatistics(unittest.TestCase):
     def test_calculate_statistics_when_backlog_is_done(self):
         received_statistics_calculated_events = []
-        subscribe(
-            lambda e: received_statistics_calculated_events.extend(e),
-            predicate=lambda events: all(isinstance(e, Analytics.StatisticsCalculated) for e in events))
         product_backlog = Given.product_backlog().please()
         analytics = Given.analytics().please()
+        subscribe(
+            lambda e: received_statistics_calculated_events.extend(e),
+            predicate=lambda events: all(
+                isinstance(e, Analytics.StatisticsCalculated) and e.originator_id == analytics.id for e in events))
 
         product_backlog.__trigger_event__(ProductBacklog.BacklogIsDone)
 
