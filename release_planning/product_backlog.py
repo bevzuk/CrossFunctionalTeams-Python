@@ -10,7 +10,8 @@ class ProductBacklog(DomainEntity):
         super(ProductBacklog, self).__init__(**kwargs)
         self._items = []
         subscribe(self.task_is_done, self._is_task_is_done_event)
-        subscribe(self.day_work_is_done, self._is_day_work_is_done_event)
+        subscribe(self.remove_done_items, self._is_day_work_is_done_event)
+        subscribe(self.check_if_backlog_is_done, self._is_day_work_is_done_event)
 
     def add(self, item_name, tasks):
         self.__trigger_event__(ProductBacklog.ItemAdded, name=item_name, tasks=tasks)
@@ -22,11 +23,19 @@ class ProductBacklog(DomainEntity):
         for event in events:
             self._handle_done_task(event.task)
 
-    def day_work_is_done(self, events):
+    def remove_done_items(self, events):
         for event in events:
-            self._handle_day_work_is_done()
+            self._remove_done_items()
 
-    def _handle_day_work_is_done(self):
+    def check_if_backlog_is_done(self, events):
+        for event in events:
+            self._check_if_backlog_is_done()
+
+    def _check_if_backlog_is_done(self):
+        if len(self._items) == 0:
+            self.__trigger_event__(ProductBacklog.BacklogIsDone)
+
+    def _remove_done_items(self):
         self._remove_items_with_done_tasks()
         self._remove_done_tasks()
 
@@ -93,3 +102,6 @@ class ProductBacklog(DomainEntity):
         def mutate(self, product_backlog) -> None:
             item = ProductBacklog.ProductBacklogItem(self.__dict__["name"], self.__dict__["tasks"])
             product_backlog._items.append(item)
+
+    class BacklogIsDone(DomainEntity.Event):
+        pass

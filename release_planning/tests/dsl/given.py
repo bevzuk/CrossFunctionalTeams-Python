@@ -1,3 +1,4 @@
+from tests.dsl.analytics_builder import AnalyticsBuilder
 from tests.dsl.product_backlog_builder import ProductBacklogBuilder
 from tests.dsl.scrum_team_builder import ScrumTeamBuilder
 
@@ -10,3 +11,7 @@ class Given:
     @classmethod
     def product_backlog(cls):
         return ProductBacklogBuilder()
+
+    @classmethod
+    def analytics(cls):
+        return AnalyticsBuilder()
